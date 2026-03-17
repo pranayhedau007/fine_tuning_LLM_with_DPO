@@ -1,0 +1,62 @@
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+
+# ── Virtual Environments ──────────────────────────────────────
+venv/
+env/
+.venv/
+
+# ── Environment Variables (NEVER commit tokens) ───────────────
+.env
+*.env
+!.env.example
+
+# ── Jupyter ───────────────────────────────────────────────────
+.ipynb_checkpoints/
+
+# ── Model Weights & Checkpoints (too large for git) ──────────
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+checkpoints/
+saved_model/
+adapter_model/
+output/
+
+# ── HuggingFace Cache ─────────────────────────────────────────
+.cache/
+huggingface/
+~/.cache/huggingface/
+
+# ── Data (load from HuggingFace directly) ─────────────────────
+data/*.json
+data/*.jsonl
+data/*.parquet
+data/*.arrow
+# Keep .gitkeep
+!data/.gitkeep
+
+# ── Results (generated, not committed) ───────────────────────
+results/*.png
+results/*.json
+results/*.csv
+!results/.gitkeep
+
+# ── OS ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── IDE ───────────────────────────────────────────────────────
+.vscode/
+.idea/
+
+# ── Logs ─────────────────────────────────────────────────────
+*.log
+logs/
+runs/
+wandb/
