@@ -1,0 +1,50 @@
+# ── QLoRA Configuration ───────────────────────────────────────
+# Used in: notebooks/02_sft_baseline.ipynb
+#          notebooks/03_dpo_training.ipynb
+#
+# QLoRA = Quantized Low-Rank Adaptation
+# Loads the base model in 4-bit (NF4) and trains only small
+# adapter matrices, keeping VRAM under 6GB on a Kaggle T4.
+
+model:
+  base_model_id: "meta-llama/Llama-3.2-3B-Instruct"
+  max_seq_length: 1024
+  torch_dtype: "bfloat16"
+
+quantization:
+  load_in_4bit: true
+  bnb_4bit_quant_type: "nf4"         # NormalFloat4 — best for LLM weights
+  bnb_4bit_compute_dtype: "bfloat16" # compute in bf16 for training stability
+  bnb_4bit_use_double_quant: true    # quantize the quantization constants too
+
+lora:
+  # rank: expressiveness of adapter. Higher = more capacity but more VRAM.
+  # 64 is the sweet spot for 3B models on a T4 (15GB VRAM).
+  r: 64
+
+  # alpha: scaling factor. Effective scale = alpha / r = 16/64 = 0.25
+  # Lower values produce more conservative weight updates.
+  lora_alpha: 16
+
+  lora_dropout: 0.05
+
+  # Target modules: layers where adapters are attached.
+  # q/k/v/o projections are the attention layers, most impactful
+  # for instruction-following and preference alignment behavior.
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+
+  bias: "none"
+  task_type: "CAUSAL_LM"
+
+tokenizer:
+  padding_side_sft: "right"   # SFT: pad on right for causal LM
+  padding_side_dpo: "left"    # DPO: pad on left so content ends at same position
+  pad_token: "eos_token"      # Llama has no default pad token
+
+# ── Ablation values ────────────────────────────────────────────
+# Swap r value to run LoRA rank ablation
+# ablation_ranks: [8, 16, 32, 64, 128]
